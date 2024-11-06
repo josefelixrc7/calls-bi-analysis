@@ -21,6 +21,24 @@ def CleanSegments():
     except mysql.connector.Error as e:
         print("- Error to clean segments: " + e.msg)
 
+def DeleteSegment(segment):
+
+    print("- Delete segment: " + segment)
+
+    # DB connection
+    conn = Connection('localhost', 'root', '0UHC72zNvywZ', 'catBI')
+    db = conn.Connect_()
+    cursor = db.cursor()
+
+    try:
+
+        # Create segment
+        cursor.execute("DELETE FROM segments WHERE name = '" + segment + "'")
+        db.commit()
+
+    except mysql.connector.Error as e:
+        print("- Error to delete segment: " + e.msg)
+
 def ShowSegments():
 
     print("- Show segments")
