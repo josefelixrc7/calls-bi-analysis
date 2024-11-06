@@ -55,17 +55,21 @@ def ProcessBacklist():
 
     # Upload records to DB
     try:
-        # JOIN and exclude blacklist records
-        cursor.execute("TRUNCATE TABLE records_blacklist")
+        # Create segment
+        cursor.execute("INSERT INTO segments (name) VALUES ('blacklist')")
         db.commit()
+        id_segment = cursor._last_insert_id
 
-        # JOIN and exclude blacklist records
+        # JOIN and exclude records
         cursor.execute(
         """
-            INSERT INTO records_blacklist(id_record)
-            SELECT r.id
+            INSERT INTO segments_records(id_record, id_segment)
+            SELECT r.id, """ + str(id_segment) + """
             FROM records r
             JOIN records_blacklist_pre rb ON rb.record = r.record
+            LEFT JOIN segments_records sr ON sr.id_record = t.id_record
+            WHERE
+                sr.id_record IS NULL
         """)
         db.commit()
 
