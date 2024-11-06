@@ -1,16 +1,15 @@
 
 import mysql.connector
 
+from connection import Connection
+
 def AddTransactions():
 
     print("- Add transactions")
 
     # DB connection
-    db_host = 'localhost'
-    db_user = 'root'
-    db_password = '0UHC72zNvywZ'
-    db_name = 'catBI'
-    db = mysql.connector.connect(host=db_host, user=db_user, passwd=db_password, db=db_name)
+    conn = Connection('localhost', 'root', '0UHC72zNvywZ', 'catBI')
+    db = conn.Connect_()
     cursor = db.cursor()
 
     try:
@@ -30,11 +29,11 @@ def AddTransactions():
 
         # Add transactions
         cursor.execute("""
-            INSERT INTO transactions (id_record, duration, user, called_at, id_status, id_nir)
+            INSERT INTO transactions (id_record, duration, extra, called_at, id_status, id_nir)
             SELECT
                 r.id
                 ,pre.duration
-                ,pre.user
+                ,pre.extra
                 ,pre.called_at
                 ,s.id
                 ,n.id
