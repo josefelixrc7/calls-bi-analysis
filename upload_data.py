@@ -2,39 +2,21 @@
 import pandas as pd
 import mysql.connector
 
-def FormatString(string):
-    valid_characteres = "abcdefghijklmnopqrstuvwxyzABCDEF GHIJKLMNOPQRSTUVWXYZ,¡:?@*_-!1234567890"
-    new_string = ''.join(c for c in string if c in valid_characteres)
-
-    if new_string == "nan":
-        return ""
-    else:
-        return new_string
-
-def FormatInt(string):
-    valid_characteres = "-1234567890"
-    new_int = ''.join(c for c in string if c in valid_characteres)
-
-    if new_int == "nan" or new_int == "":
-        return 0
-    else:
-        return int(new_int)
+from connection import Connection
+import tools as t
 
 def UploadData(csv_file):
 
-    print("- Upload Data")
+    print("- Upload Data: " + csv_file)
 
     # DB connection
-    db_host = 'localhost'
-    db_user = 'root'
-    db_password = '0UHC72zNvywZ'
-    db_name = 'catBI'
-    db = mysql.connector.connect(host=db_host, user=db_user, passwd=db_password, db=db_name)
+    conn = Connection('localhost', 'root', '0UHC72zNvywZ', 'catBI')
+    db = conn.Connect_()
     cursor = db.cursor()
 
     # Read file
     print("- Reading file")
-    data = pd.read_csv(csv_file, sep = ",")
+    data = pd.read_csv(csv_file, sep = "\t")
 
     # Truncate transactions_pre
     cursor.execute("TRUNCATE TABLE transactions_pre")
@@ -45,14 +27,14 @@ def UploadData(csv_file):
     for index, row in data.iterrows():
 
         # Values
-        record = FormatString(str(row['record']))
-        duration = FormatInt(str(row['duration']))
-        user = FormatString(str(row['user']))
-        status = FormatString(str(row['status']))
-        called_at = FormatString(str(row['called_at']))
+        record = t.FormatString(str(row['record']))
+        duration = t.FormatInt(str(row['duration']))
+        extra = str(row['extra'])
+        status = t.FormatString(str(row['status']))
+        called_at = t.FormatString(str(row['called_at']))
 
         if record is not None and not pd.isnull(record) and record != "":
-            insert_row = [record, duration, user, status, called_at]
+            insert_row = [record, duration, extra, status, called_at]
             array.append(tuple(insert_row))
            
     print("- Total records to upload: " + str(len(array)))
@@ -60,7 +42,7 @@ def UploadData(csv_file):
     # Upload records to DB
     try:
         query = """
-            INSERT INTO transactions_pre (record, duration, user, status, called_at)
+            INSERT INTO transactions_pre (record, duration, extra, status, called_at)
             VALUES (%s, %s, %s, %s, %s)
         """
         cursor.executemany(query, array)
