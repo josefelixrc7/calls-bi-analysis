@@ -14,17 +14,21 @@ def ProcessOverused():
 
     try:
 
-        # Add new records
-        cursor.execute("""TRUNCATE TABLE records_overused""")
+        # Create segment
+        cursor.execute("INSERT INTO segments (name) VALUES ('overused')")
         db.commit()
+        id_segment = cursor._last_insert_id
 
-        # Add transactions
-        cursor.execute("""
-            INSERT INTO records_overused (id_record)
-            SELECT t.id_record
+        # JOIN and exclude records
+        cursor.execute(
+        """
+            INSERT INTO segments_records(id_record, id_segment)
+            SELECT t.id_record, """ + str(id_segment) + """
             FROM transactions t
+            LEFT JOIN segments_records sr ON sr.id_record = t.id_record
             WHERE
-                t.called_at >= NOW() - INTERVAL 1 MONTH
+                sr.id_record IS NULL
+                AND t.called_at >= NOW() - INTERVAL 1 MONTH
                 AND t.duration >= 20
             GROUP BY t.id_record
             HAVING COUNT(t.id) >= 6
