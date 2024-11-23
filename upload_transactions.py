@@ -5,9 +5,9 @@ import mysql.connector
 from connection import Connection
 import tools as t
 
-def UploadData(csv_file):
+def UploadTransactions(csv_file):
 
-    print("- Upload Data: " + csv_file)
+    print("- Upload Transactions: " + csv_file)
 
     # DB connection
     conn = Connection('localhost', 'root', '0UHC72zNvywZ', 'catBI')
@@ -16,13 +16,13 @@ def UploadData(csv_file):
 
     # Read file
     print("- Reading file")
-    data = pd.read_csv(csv_file, sep = "\t")
+    data = pd.read_csv(csv_file, sep = "\t", dtype={"record": "string", "duration": float, "extra": "string", "status": "string", "called_at": "string"})
 
     # Truncate transactions_pre
     cursor.execute("TRUNCATE TABLE transactions_pre")
     db.commit()
 
-    # Iterate over CSV records
+    # Iterate over CSV transactions
     array = []
     for index, row in data.iterrows():
 
@@ -39,7 +39,7 @@ def UploadData(csv_file):
            
     print("- Total records to upload: " + str(len(array)))
 
-    # Upload records to DB
+    # Upload transactions to DB
     try:
         query = """
             INSERT INTO transactions_pre (record, duration, extra, status, called_at)
@@ -49,4 +49,4 @@ def UploadData(csv_file):
         db.commit()
 
     except mysql.connector.Error as e:
-        print("- Error to upload records: " + e.msg)
+        print("- Error to Upload Transactions: " + e.msg)
