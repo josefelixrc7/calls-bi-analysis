@@ -69,34 +69,3 @@ def ProcessBacklist():
 
     except mysql.connector.Error as e:
         print("- Error to process blacklist: " + e.msg)
-
-def ExcludeBacklist():
-
-    print("- Exclude Blacklist")
-
-    # DB connection
-    conn = Connection('localhost', 'root', '0UHC72zNvywZ', 'catBI')
-    db = conn.Connect_()
-    cursor = db.cursor()
-
-    # Upload records to DB
-    try:
-        # Create segment
-        cursor.execute("INSERT INTO segments (name) VALUES ('blacklist')")
-        db.commit()
-        id_segment = cursor._last_insert_id
-
-        # JOIN and exclude records
-        cursor.execute(
-        """
-            INSERT INTO segments_records(id_record, id_segment)
-            SELECT rb.id_record, """ + str(id_segment) + """
-            FROM records_blacklist rb
-            LEFT JOIN segments_records sr ON sr.id_record = rb.id_record
-            WHERE
-                sr.id_record IS NULL
-        """)
-        db.commit()
-
-    except mysql.connector.Error as e:
-        print("- Error to exclude blacklist: " + e.msg)
