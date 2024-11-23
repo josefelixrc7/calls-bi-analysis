@@ -42,11 +42,37 @@ def UploadBacklist(csv_file):
         db.commit()
 
     except mysql.connector.Error as e:
-        print("- Error to process blacklist: " + e.msg)
+        print("- Error to upload blacklist: " + e.msg)
 
 def ProcessBacklist():
 
     print("- Process Blacklist")
+
+    # DB connection
+    conn = Connection('localhost', 'root', '0UHC72zNvywZ', 'catBI')
+    db = conn.Connect_()
+    cursor = db.cursor()
+
+    try:
+        # Truncate blacklist records
+        cursor.execute("TRUNCATE TABLE records_blacklist")
+        db.commit()
+
+        # Process blacklist records
+        cursor.execute("""
+            INSERT INTO records_blacklist (id_record)
+            SELECT r.id
+            FROM records r
+            JOIN records_blacklist_pre pre ON pre.record = r.record         
+        """)
+        db.commit()
+
+    except mysql.connector.Error as e:
+        print("- Error to process blacklist: " + e.msg)
+
+def ExcludeBacklist():
+
+    print("- Exclude Blacklist")
 
     # DB connection
     conn = Connection('localhost', 'root', '0UHC72zNvywZ', 'catBI')
@@ -64,14 +90,13 @@ def ProcessBacklist():
         cursor.execute(
         """
             INSERT INTO segments_records(id_record, id_segment)
-            SELECT r.id, """ + str(id_segment) + """
-            FROM records r
-            JOIN records_blacklist_pre rb ON rb.record = r.record
-            LEFT JOIN segments_records sr ON sr.id_record = t.id_record
+            SELECT rb.id_record, """ + str(id_segment) + """
+            FROM records_blacklist rb
+            LEFT JOIN segments_records sr ON sr.id_record = rb.id_record
             WHERE
                 sr.id_record IS NULL
         """)
         db.commit()
 
     except mysql.connector.Error as e:
-        print("- Error to process blacklist: " + e.msg)
+        print("- Error to exclude blacklist: " + e.msg)
