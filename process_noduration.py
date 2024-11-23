@@ -3,7 +3,7 @@ import mysql.connector
 
 from connection import Connection
 
-def ProcessOverused():
+def ProcessNoDuration():
 
     print("- Process no duration records")
 
