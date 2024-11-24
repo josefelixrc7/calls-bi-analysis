@@ -23,6 +23,7 @@ def AnalysisCentroForaneo():
             INSERT INTO records_selected(id_record, id_nir)
             SELECT r.id, n.id
             FROM records r
+            JOIN segments_databases sd ON sd.id_database = r.id_database
             LEFT JOIN segments_records sr ON sr.id_record = r.id
             JOIN nirs n ON n.nir = SUBSTRING(r.record, 1, 3)
             WHERE
@@ -49,6 +50,7 @@ def AnalysisCentroMetropolitano():
             INSERT INTO records_selected(id_record, id_nir)
             SELECT r.id, n.id
             FROM records r
+            JOIN segments_databases sd ON sd.id_database = r.id_database
             LEFT JOIN segments_records sr ON sr.id_record = r.id
             JOIN nirs n ON n.nir = SUBSTRING(r.record, 1, 3)
             WHERE
@@ -75,6 +77,7 @@ def AnalysisNoreste():
             INSERT INTO records_selected(id_record, id_nir)
             SELECT r.id, n.id
             FROM records r
+            JOIN segments_databases sd ON sd.id_database = r.id_database
             LEFT JOIN segments_records sr ON sr.id_record = r.id
             JOIN nirs n ON n.nir = SUBSTRING(r.record, 1, 3)
             WHERE
@@ -101,6 +104,7 @@ def AnalysisNoroeste():
             INSERT INTO records_selected(id_record, id_nir)
             SELECT r.id, n.id
             FROM records r
+            JOIN segments_databases sd ON sd.id_database = r.id_database
             LEFT JOIN segments_records sr ON sr.id_record = r.id
             JOIN nirs n ON n.nir = SUBSTRING(r.record, 1, 3)
             WHERE
@@ -127,6 +131,7 @@ def AnalysisOccidente():
             INSERT INTO records_selected(id_record, id_nir)
             SELECT r.id, n.id
             FROM records r
+            JOIN segments_databases sd ON sd.id_database = r.id_database
             LEFT JOIN segments_records sr ON sr.id_record = r.id
             JOIN nirs n ON n.nir = SUBSTRING(r.record, 1, 3)
             WHERE
@@ -153,6 +158,7 @@ def AnalysisSur():
             INSERT INTO records_selected(id_record, id_nir)
             SELECT r.id, n.id
             FROM records r
+            JOIN segments_databases sd ON sd.id_database = r.id_database
             LEFT JOIN segments_records sr ON sr.id_record = r.id
             JOIN nirs n ON n.nir = SUBSTRING(r.record, 1, 3)
             WHERE
@@ -179,6 +185,7 @@ def AnalysisSureste():
             INSERT INTO records_selected(id_record, id_nir)
             SELECT r.id, n.id
             FROM records r
+            JOIN segments_databases sd ON sd.id_database = r.id_database
             LEFT JOIN segments_records sr ON sr.id_record = r.id
             JOIN nirs n ON n.nir = SUBSTRING(r.record, 1, 3)
             WHERE
