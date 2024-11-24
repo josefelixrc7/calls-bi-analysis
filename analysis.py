@@ -14,14 +14,14 @@ def AnalysisNoreste():
 
     try:
         # Truncate records_preselected
-        cursor.execute("TRUNCATE TABLE records_preselected")
+        cursor.execute("TRUNCATE TABLE records_selected")
         db.commit()
 
         # Insert records
         cursor.execute(
         """
-            INSERT INTO records_preselected(id_record)
-            SELECT r.id
+            INSERT INTO records_selected(id_record, id_nir)
+            SELECT r.id, n.id
             FROM records r
             LEFT JOIN segments_records sr ON sr.id_record = r.id
             JOIN nirs n ON n.nir = SUBSTRING(r.record, 1, 3)
