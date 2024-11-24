@@ -64,6 +64,48 @@ def ShowSegments():
     except mysql.connector.Error as e:
         print("- Error to show segments: " + e.msg)
 
+def CleanDatabasesUsed():
+
+    print("- CleanDatabasesUsed")
+
+    # DB connection
+    conn = Connection('localhost', 'root', '0UHC72zNvywZ', 'catBI')
+    db = conn.Connect_()
+    cursor = db.cursor()
+
+    try:
+
+        # Truncate
+        cursor.execute("TRUNCATE TABLE segments_databases")
+        db.commit()
+
+    except mysql.connector.Error as e:
+        print("- Error to CleanDatabasesUsed: " + e.msg)
+
+def UseDatabase(database):
+
+    print("- UseDatabase")
+
+    # DB connection
+    conn = Connection('localhost', 'root', '0UHC72zNvywZ', 'catBI')
+    db = conn.Connect_()
+    cursor = db.cursor()
+
+    try:
+
+        # Add databases to use
+        cursor.execute("""
+            INSERT INTO segments_databases (id_database)
+            SELECT id
+            FROM `databases`
+            WHERE name = '""" + database + """'
+        """)
+        db.commit()
+
+    except mysql.connector.Error as e:
+        print("- Error to UseDatabase: " + e.msg)
+
+
 def CreateSegment(cantity, segment_name):
 
     print("- Create Segment: " + segment_name + " (" + str(cantity) + ")")
