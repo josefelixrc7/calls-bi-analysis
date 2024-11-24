@@ -32,6 +32,7 @@ def ExportAnalysis():
                     ,n.state AS estado
                     ,n.city AS plaza
                     ,IFNULL(JSON_EXTRACT(ri.info, '$.client'), "") AS cliente
+                    ,IFNULL(JSON_EXTRACT(ri.info, '$.curp'), "") AS curp
                 FROM segments s
                 JOIN segments_records sr ON sr.id_segment = s.id 
                 JOIN records r ON r.id = sr.id_record 
@@ -44,7 +45,7 @@ def ExportAnalysis():
 
             # Save to CSV
             filename = "~/" + str(it[1]) + ".csv"
-            columns = ['phone_code','phone_number','region','estado','plaza','cliente']
+            columns = ['phone_code','phone_number','region','estado','plaza','cliente','curp']
             df = pd.DataFrame(analysis, columns=columns, dtype='string')
             df.to_csv(filename, index=False, sep="\t", header=columns)
 
