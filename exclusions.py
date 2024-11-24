@@ -15,7 +15,7 @@ def ExcludeBacklist():
     # Upload records to DB
     try:
         # Create segment
-        cursor.execute("INSERT INTO segments (name) VALUES ('blacklist')")
+        cursor.execute("INSERT INTO segments (name, type) VALUES ('blacklist', 'exclusion')")
         db.commit()
         id_segment = cursor._last_insert_id
 
@@ -46,7 +46,7 @@ def ExcludeNoDuration():
     try:
 
         # Create segment
-        cursor.execute("INSERT INTO segments (name) VALUES ('noduration')")
+        cursor.execute("INSERT INTO segments (name, type) VALUES ('noduration', 'exclusion')")
         db.commit()
         id_segment = cursor._last_insert_id
 
@@ -80,7 +80,7 @@ def ExcludeNoreusable():
     try:
 
         # Create segment
-        cursor.execute("INSERT INTO segments (name) VALUES ('noreusable')")
+        cursor.execute("INSERT INTO segments (name, type) VALUES ('noreusable', 'exclusion')")
         db.commit()
         id_segment = cursor._last_insert_id
 
@@ -115,7 +115,7 @@ def ExcludeOverused():
     try:
 
         # Create segment
-        cursor.execute("INSERT INTO segments (name) VALUES ('overused')")
+        cursor.execute("INSERT INTO segments (name, type) VALUES ('overused', 'exclusion')")
         db.commit()
         id_segment = cursor._last_insert_id
 
@@ -150,7 +150,7 @@ def ExcludeSales():
     try:
 
         # Create segment
-        cursor.execute("INSERT INTO segments (name) VALUES ('sales')")
+        cursor.execute("INSERT INTO segments (name, type) VALUES ('sales', 'exclusion')")
         db.commit()
         id_segment = cursor._last_insert_id
 
