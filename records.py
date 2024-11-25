@@ -12,15 +12,14 @@ class Records:
         self.db = self.conn.Connect_()
         self.cursor = self.db.cursor()
 
-    def AddRecords(self, csv_file, database_type):
+    def Add(self, csv_file, database_type, source):
 
         print("- Add Records: " + csv_file)
 
         try:
 
             # Read file
-            print("- Reading file")
-            data = pd.read_csv(csv_file, sep = "\t", dtype={"record": "string"})
+            data = pd.read_csv(csv_file, sep = "\t", dtype="string")
 
             # Truncate transactions_pre
             self.cursor.execute("TRUNCATE TABLE records_pre")
@@ -41,8 +40,10 @@ class Records:
 
             # Create new DB
             self.cursor.execute("""
-                INSERT INTO databases (name, type)
-                SELECT CONCAT('DB_', name, '_', '""" + str(len(array)) + """'), id
+                INSERT INTO `databases` (name, id_database_type)
+                SELECT
+                    CONCAT('DB_', '""" + source + """', '_', '""" + str(len(array)) + """')
+                    ,id
                 FROM databases_types
                 WHERE name = '""" + database_type + """'
             """)
