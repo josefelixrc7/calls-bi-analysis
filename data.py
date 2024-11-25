@@ -7,7 +7,7 @@ import tools as t
 
 class Data:
 
-    def Download(conn, query, file, columns):
+    def Download(self, conn, query, file, columns):
 
         print("- Download Data: " + file)
 
@@ -30,7 +30,7 @@ class Data:
 
         cursor.close()
 
-    def UploadBacklist(csv_file):
+    def UploadBacklist(self, csv_file):
 
         print("- Upload Blacklist: " + csv_file)
 
@@ -69,7 +69,7 @@ class Data:
         except mysql.connector.Error as e:
             print("- Error to upload blacklist: " + e.msg)
 
-    def ProcessBacklist():
+    def ProcessBacklist(self):
 
         print("- Process Blacklist")
 
