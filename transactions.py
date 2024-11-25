@@ -17,7 +17,6 @@ class Transactions:
         print("- Upload Transactions: " + csv_file)
 
         # Read file
-        print("- Reading file")
         data = pd.read_csv(csv_file, sep = "\t", dtype={"record": "string", "duration": float, "extra": "string", "status": "string", "called_at": "string"})
 
         # Truncate transactions_pre
