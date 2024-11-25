@@ -5,7 +5,7 @@ import mysql.connector
 from connection import Connection
 import tools as t
 
-def UploadRecords(csv_file):
+def UploadRecords(csv_file, database_type):
 
     print("- Upload Records: " + csv_file)
 
@@ -37,6 +37,16 @@ def UploadRecords(csv_file):
             
         print("- Total records to upload: " + str(len(array)))
 
+        # Create new DB
+        cursor.execute("""
+            INSERT INTO databases (name, type)
+            SELECT CONCAT('DB_', name, '_', '""" + str(len(array)) + """'), id
+            FROM databases_types
+            WHERE name = '""" + database_type + """'
+        """)
+        db.commit()
+        id_database = cursor._last_insert_id
+
         # Upload records to DB
         query = """
             INSERT INTO records_pre (record)
@@ -47,11 +57,9 @@ def UploadRecords(csv_file):
 
         # Add new records
         query = """
-            INSERT INTO records (record)
-            SELECT pre.record
+            INSERT INTO records (record, id_database)
+            SELECT pre.record, """ + str(id_database) + """
             FROM records_pre pre
-            LEFT JOIN records r ON r.record = pre.record
-            WHERE r.record IS NULL
         """
         cursor.execute(query)
         db.commit()
