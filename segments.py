@@ -98,7 +98,7 @@ def UseDatabase(database):
             INSERT INTO segments_databases (id_database)
             SELECT id
             FROM `databases`
-            WHERE name = '""" + database + """'
+            WHERE id = """ + str(database) + """
         """)
         db.commit()
 
