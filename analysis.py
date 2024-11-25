@@ -29,6 +29,7 @@ def AnalysisCentroForaneo():
             WHERE
                 sr.id_record IS NULL
                 AND n.region = 'Centro Foráneo'
+            GROUP BY r.id
         """)
         db.commit()
 
@@ -56,6 +57,7 @@ def AnalysisCentroMetropolitano():
             WHERE
                 sr.id_record IS NULL
                 AND n.region = 'Centro Metropolitano'
+            GROUP BY r.id
         """)
         db.commit()
 
@@ -83,6 +85,7 @@ def AnalysisNoreste():
             WHERE
                 sr.id_record IS NULL
                 AND n.region = 'Noreste'
+            GROUP BY r.id
         """)
         db.commit()
 
@@ -110,6 +113,7 @@ def AnalysisNoroeste():
             WHERE
                 sr.id_record IS NULL
                 AND n.region = 'Noroeste'
+            GROUP BY r.id
         """)
         db.commit()
 
@@ -137,6 +141,7 @@ def AnalysisOccidente():
             WHERE
                 sr.id_record IS NULL
                 AND n.region = 'Occidente'
+            GROUP BY r.id
         """)
         db.commit()
 
@@ -164,6 +169,7 @@ def AnalysisSur():
             WHERE
                 sr.id_record IS NULL
                 AND n.region = 'Sur'
+            GROUP BY r.id
         """)
         db.commit()
 
@@ -191,6 +197,7 @@ def AnalysisSureste():
             WHERE
                 sr.id_record IS NULL
                 AND n.region = 'Sureste'
+            GROUP BY r.id
         """)
         db.commit()
 
