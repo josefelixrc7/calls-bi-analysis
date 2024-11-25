@@ -77,7 +77,7 @@ class Records:
         try:
 
             # Read file
-            data = pd.read_csv(csv_file, sep = "\t", dtype="string")
+            data = pd.read_csv(csv_file, sep = ",", dtype="string")
 
             # Truncate transactions_pre
             self.cursor.execute("TRUNCATE TABLE records_info_pre")
@@ -88,7 +88,7 @@ class Records:
             for index, row in data.iterrows():
 
                 # Values
-                record = t.FormatString(str(row['record']))
+                record = str(t.FormatIntUnsigned(str(row['record'])))
                 client = t.FormatString(str(row['client']))
                 curp = t.FormatString(str(row['curp']))
 
@@ -108,11 +108,13 @@ class Records:
 
             # Add new records
             query = """
-                INSERT INTO records (record)
-                SELECT pre.record
+                INSERT INTO records (record, id_database)
+                SELECT pre.record, 3
                 FROM records_info_pre pre
                 LEFT JOIN records r ON r.record = pre.record
-                WHERE r.record IS NULL
+                WHERE
+                    r.record IS NULL
+                    AND CHAR_LENGTH(pre.record) = 10
             """
             self.cursor.execute(query)
             self.db.commit()
@@ -134,7 +136,7 @@ class Records:
                 JOIN records r ON r.id = ri.id_record
                 JOIN records_info_pre pre ON pre.record = r.record
                 SET
-                    ri.info = CONCAT('{"client": "', pre.client, '", "curp": "', pre.curp, "}')
+                    ri.info = CONCAT('{"client": "', pre.client, '", "curp": "', pre.curp, '"}')
             """
             self.cursor.execute(query)
             self.db.commit()
