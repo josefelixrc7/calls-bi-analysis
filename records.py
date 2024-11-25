@@ -7,14 +7,71 @@ import tools as t
 
 class Records:
 
-    def UpdateInfo(csv_file):
+    def __init__(self):
+        self.conn = Connection('localhost', 'root', '0UHC72zNvywZ', 'catBI')
+        self.db = self.conn.Connect_()
+        self.cursor = self.db.cursor()
+
+    def AddRecords(self, csv_file, database_type):
+
+        print("- Add Records: " + csv_file)
+
+        try:
+
+            # Read file
+            print("- Reading file")
+            data = pd.read_csv(csv_file, sep = "\t", dtype={"record": "string"})
+
+            # Truncate transactions_pre
+            self.cursor.execute("TRUNCATE TABLE records_pre")
+            self.db.commit()
+
+            # Iterate over CSV records
+            array = []
+            for index, row in data.iterrows():
+
+                # Values
+                record = t.FormatString(str(row['record']))
+
+                if record is not None and not pd.isnull(record) and record != "":
+                    insert_row = [record]
+                    array.append(tuple(insert_row))
+                
+            print("- Total records to upload: " + str(len(array)))
+
+            # Create new DB
+            self.cursor.execute("""
+                INSERT INTO databases (name, type)
+                SELECT CONCAT('DB_', name, '_', '""" + str(len(array)) + """'), id
+                FROM databases_types
+                WHERE name = '""" + database_type + """'
+            """)
+            self.db.commit()
+            id_database = self.cursor._last_insert_id
+
+            # Upload records to DB
+            query = """
+                INSERT INTO records_pre (record)
+                VALUES (%s)
+            """
+            self.cursor.executemany(query, array)
+            self.db.commit()
+
+            # Add new records
+            query = """
+                INSERT INTO records (record, id_database)
+                SELECT pre.record, """ + str(id_database) + """
+                FROM records_pre pre
+            """
+            self.cursor.execute(query)
+            self.db.commit()
+
+        except mysql.connector.Error as e:
+            print("- Error to Add records: " + e.msg)
+
+    def UpdateInfo(self, csv_file):
 
         print("- Records: UpdateInfo: " + csv_file)
-
-        # DB connection
-        conn = Connection('localhost', 'root', '0UHC72zNvywZ', 'catBI')
-        db = conn.Connect_()
-        cursor = db.cursor()
 
         try:
 
@@ -22,8 +79,8 @@ class Records:
             data = pd.read_csv(csv_file, sep = "\t", dtype="string")
 
             # Truncate transactions_pre
-            cursor.execute("TRUNCATE TABLE records_info_pre")
-            db.commit()
+            self.cursor.execute("TRUNCATE TABLE records_info_pre")
+            self.db.commit()
 
             # Iterate over CSV records
             array = []
@@ -45,8 +102,8 @@ class Records:
                 INSERT INTO records_info_pre (record, client, curp)
                 VALUES (%s, %s, %s)
             """
-            cursor.executemany(query, array)
-            db.commit()
+            self.cursor.executemany(query, array)
+            self.db.commit()
 
             # Add new records
             query = """
@@ -56,8 +113,8 @@ class Records:
                 LEFT JOIN records r ON r.record = pre.record
                 WHERE r.record IS NULL
             """
-            cursor.execute(query)
-            db.commit()
+            self.cursor.execute(query)
+            self.db.commit()
 
             # Add new records_info
             query = """
@@ -67,8 +124,8 @@ class Records:
                 LEFT JOIN records_info ri ON r.id_record = r.id
                 WHERE r.id_record IS NULL
             """
-            cursor.execute(query)
-            db.commit()
+            self.cursor.execute(query)
+            self.db.commit()
 
             # Update info
             query = """
@@ -78,8 +135,8 @@ class Records:
                 SET
                     ri.info = CONCAT('{"client": "', pre.client, '", "curp": "', pre.curp, "}')
             """
-            cursor.execute(query)
-            db.commit()
+            self.cursor.execute(query)
+            self.db.commit()
 
         except mysql.connector.Error as e:
             print("- Error to Records: UpdateInfo: " + e.msg)
