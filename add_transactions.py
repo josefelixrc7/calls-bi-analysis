@@ -14,11 +14,12 @@ def AddTransactions():
 
     try:
 
-        # Add new records
+        # Add new records (Referidos Database)
         cursor.execute("""
-            INSERT INTO records (record)
+            INSERT INTO records (record, id_database)
             SELECT
                 DISTINCT pre.record
+                ,3
             FROM transactions_pre pre
             LEFT JOIN records r ON r.record = pre.record
             WHERE
