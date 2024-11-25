@@ -7,7 +7,7 @@ import tools as t
 
 class Data:
 
-    def Download(self, conn, query, file, columns):
+    def Download(self, conn, query, file, columns, sep = "\t"):
 
         print("- Download Data: " + file)
 
@@ -23,7 +23,7 @@ class Data:
 
             # Save to CSV
             df = pd.DataFrame(records, columns=columns)
-            df.to_csv(file, index=False,sep="\t", header=columns)
+            df.to_csv(file, index=False,sep=sep, header=columns)
 
         except mysql.connector.Error as e:
             print("- Error to Download Data: " + e.msg)
