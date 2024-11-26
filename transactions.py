@@ -17,7 +17,15 @@ class Transactions:
         print("- Upload Transactions: " + csv_file)
 
         # Read file
-        data = pd.read_csv(csv_file, sep = "\t", dtype={"record": "string", "duration": float, "extra": "string", "status": "string", "called_at": "string"})
+        data = pd.read_csv(csv_file, sep = "\t", dtype={
+            "record": "string"
+            ,"duration": float
+            ,"status": "string"
+            ,"called_at": "string"
+            ,"user": "string"
+            ,"campaign_id": "string"
+            ,"list_id": int
+        })
 
         # Truncate transactions_pre
         self.cursor.execute("TRUNCATE TABLE transactions_pre")
@@ -30,21 +38,23 @@ class Transactions:
             # Values
             record = t.FormatString(str(row['record']))
             duration = t.FormatInt(str(row['duration']))
-            extra = str(row['extra'])
             status = t.FormatString(str(row['status']))
             called_at = t.FormatString(str(row['called_at']))
+            user = t.FormatString(str(row['user']))
+            campaign_id = t.FormatString(str(row['campaign_id']))
+            list_id = t.FormatInt(str(row['list_id']))
 
             if record is not None and not pd.isnull(record) and record != "":
-                insert_row = [record, duration, extra, status, called_at]
+                insert_row = [record, duration, status, called_at, user, campaign_id, list_id]
                 array.append(tuple(insert_row))
             
-        print("- Total records to upload: " + str(len(array)))
+        print("- Total transactions to upload: " + str(len(array)))
 
         # Upload transactions to DB
         try:
             query = """
-                INSERT INTO transactions_pre (record, duration, extra, status, called_at)
-                VALUES (%s, %s, %s, %s, %s)
+                INSERT INTO transactions_pre (record, duration, status, called_at, user, campaign_id, list_id)
+                VALUES (%s, %s, %s, %s, %s, %s, %s)
             """
             self.cursor.executemany(query, array)
             self.db.commit()
@@ -69,8 +79,13 @@ class Transactions:
                 WHERE
                     r.record IS NULL
                     AND pre.record IS NOT NULL
+                    AND LENGTH(pre.record) = 10
             """)
             self.db.commit()
+
+            # Update statuses prefix
+            """self.cursor.execute("UPDATE transactions_pre SET status = CONCAT('BP_', status)")
+            self.db.commit()"""
 
             # Add transactions
             self.cursor.execute("""
@@ -78,7 +93,7 @@ class Transactions:
                 SELECT
                     r.id
                     ,pre.duration
-                    ,pre.extra
+                    ,CONCAT('{"user":"', pre.user,'","campaign_id":"', pre.campaign_id,'","list_id":"', pre.list_id,'"}')
                     ,pre.called_at
                     ,s.id
                     ,n.id
