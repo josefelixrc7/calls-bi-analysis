@@ -12,6 +12,51 @@ class Records:
         self.db = self.conn.Connect_()
         self.cursor = self.db.cursor()
 
+    def AddTo(self, query_to, id_database):
+
+        print("- Add To: " + str(id_database))
+
+        try:
+
+            # Truncate transactions_pre
+            self.cursor.execute("TRUNCATE TABLE records_pre")
+            self.db.commit()
+
+            # Execute copy query
+            self.cursor.execute(query_to)
+            self.db.commit()
+
+            # Delete existing records
+            self.cursor.execute("""
+                DELETE rp FROM records_pre rp
+                LEFT JOIN records r ON r.record = rp.record
+                WHERE
+                    r.record IS NULL
+                    AND pre.record IS NOT NULL
+                    AND LENGTH(pre.record) = 10
+            """)
+            self.db.commit()
+
+            # Insert new records
+            self.cursor.execute("""
+                INSERT INTO records (record)
+                SELECT record
+                FROM records_pre
+            """)
+            self.db.commit()
+
+            # Add new records to selected DB
+            self.cursor.execute("""
+                INSERT INTO databases_records (id_record, id_database)
+                SELECT r.id, """ + str(id_database) + """
+                FROM records_pre rp
+                JOIN records r ON r.record = rp.record
+            """)
+            self.db.commit()
+
+        except mysql.connector.Error as e:
+            print("- Error to Add To records: " + e.msg)
+
     def Add(self, csv_file, database_type, source):
 
         print("- Add Records: " + csv_file)
@@ -118,31 +163,8 @@ class Records:
             self.cursor.executemany(query, array)
             self.db.commit()
 
-            # Add new records
-            query = """
-                INSERT INTO records (record)
-                SELECT pre.record
-                FROM records_info_pre pre
-                LEFT JOIN records r ON r.record = pre.record
-                WHERE
-                    r.record IS NULL
-                    AND CHAR_LENGTH(pre.record) = 10
-            """
-            self.cursor.execute(query)
-            self.db.commit()
-
-            # Add new records to Database 3 (Referidos)
-            query = """
-                INSERT INTO databases_records (id_record, id_database)
-                SELECT pre.record, 3
-                FROM records_info_pre pre
-                JOIN records r ON r.record = pre.record
-                LEFT JOIN databases_records dr ON dr.id_record = r.record AND dr.id_database = 3
-                WHERE
-                    dr.id_record IS NULL
-            """
-            self.cursor.execute(query)
-            self.db.commit()
+            # Add new records to Referidos DB
+            self.AddTo("INSERT INTO records_pre (record) SELECT DISTINCT record FROM records_info_pre", 3)
 
             # Add new records_info
             query = """
