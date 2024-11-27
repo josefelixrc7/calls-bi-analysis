@@ -66,7 +66,7 @@ class Transactions:
                     self.cursor.executemany(query, array)
                     self.db.commit()
                     array = []
-                    cont = 1
+                    cont = 0
             
             # Upload dangling records
             print("- Total transactions to upload (last batch): " + str(len(array)))
@@ -77,7 +77,6 @@ class Transactions:
             """
             self.cursor.executemany(query, array)
             self.db.commit()
-
 
         except mysql.connector.Error as e:
             print("- Error to Upload Transactions: " + e.msg)
