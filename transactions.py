@@ -4,6 +4,7 @@ import mysql.connector
 
 from connection import Connection
 import tools as t
+import records as r
 
 class Transactions:
 
@@ -81,19 +82,9 @@ class Transactions:
             """)
             self.db.commit()
 
-            # Add new records (Referidos Database)
-            self.cursor.execute("""
-                INSERT INTO databases_records (id_record, id_database)
-                SELECT r.id, 3
-                FROM transactions_pre pre
-                JOIN records r ON r.record = pre.record
-                LEFT JOIN databases_records dr ON dr.id_record = r.id AND dr.id_database = 3
-                WHERE
-                    dr.id_record IS NULL
-                    AND pre.record IS NOT NULL
-                    AND LENGTH(pre.record) = 10
-            """)
-            self.db.commit()
+            # Add new records to Referidos DB
+            records = r.Records()
+            r.AddTo("INSERT INTO records_pre (record) SELECT DISTINCT record FROM transactions_pre", 3)
 
             # Update statuses prefix
             """self.cursor.execute("UPDATE transactions_pre SET status = CONCAT('BP_', status)")
