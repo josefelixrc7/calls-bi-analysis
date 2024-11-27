@@ -164,7 +164,7 @@ def ExcludeSales():
             JOIN statuses s ON s.id = t.id_status
             WHERE
                 sr.id_record IS NULL
-                AND s.status IN ('11', '13', '600', '602', '603')
+                AND s.status IN ('11', '13', '600', '602', '603', 'BP_11')
                 AND t.called_at >= NOW() - INTERVAL 1 MONTH
             GROUP BY t.id_record
         """)
