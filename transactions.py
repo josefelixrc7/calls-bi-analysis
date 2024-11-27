@@ -17,42 +17,60 @@ class Transactions:
 
         print("- Upload Transactions: " + csv_file)
 
-        # Read file
-        data = pd.read_csv(csv_file, sep = "\t", dtype={
-            "record": "string"
-            ,"duration": float
-            ,"status": "string"
-            ,"called_at": "string"
-            ,"user": "string"
-            ,"campaign_id": "string"
-            ,"list_id": int
-        })
-
-        # Truncate transactions_pre
-        self.cursor.execute("TRUNCATE TABLE transactions_pre")
-        self.db.commit()
-
-        # Iterate over CSV transactions
-        array = []
-        for index, row in data.iterrows():
-
-            # Values
-            record = t.FormatString(str(row['record']))
-            duration = t.FormatInt(str(row['duration']))
-            status = t.FormatString(str(row['status']))
-            called_at = t.FormatString(str(row['called_at']))
-            user = t.FormatString(str(row['user']))
-            campaign_id = t.FormatString(str(row['campaign_id']))
-            list_id = t.FormatInt(str(row['list_id']))
-
-            if record is not None and not pd.isnull(record) and record != "":
-                insert_row = [record, duration, status, called_at, user, campaign_id, list_id]
-                array.append(tuple(insert_row))
-            
-        print("- Total transactions to upload: " + str(len(array)))
-
-        # Upload transactions to DB
         try:
+                
+            # Read file
+            data = pd.read_csv(csv_file, sep = "\t", dtype={
+                "record": "string"
+                ,"duration": float
+                ,"status": "string"
+                ,"called_at": "string"
+                ,"user": "string"
+                ,"campaign_id": "string"
+                ,"list_id": int
+            })
+
+            # Truncate transactions_pre
+            self.cursor.execute("TRUNCATE TABLE transactions_pre")
+            self.db.commit()
+
+            # Iterate over CSV transactions
+            array = []
+            cont = 0
+            for index, row in data.iterrows():
+
+                # Values
+                record = t.FormatString(str(row['record']))
+                duration = t.FormatInt(str(row['duration']))
+                status = t.FormatString(str(row['status']))
+                called_at = t.FormatString(str(row['called_at']))
+                user = t.FormatString(str(row['user']))
+                campaign_id = t.FormatString(str(row['campaign_id']))
+                list_id = t.FormatInt(str(row['list_id']))
+
+                if record is not None and not pd.isnull(record) and record != "":
+                    insert_row = [record, duration, status, called_at, user, campaign_id, list_id]
+                    array.append(tuple(insert_row))
+
+                # Verify a 500k batch
+                cont = cont + 1
+                if cont >= 500000:
+
+                    print("- Total transactions to upload (batch): " + str(len(array)))
+
+                    # Upload transactions to DB
+                    query = """
+                        INSERT INTO transactions_pre (record, duration, status, called_at, user, campaign_id, list_id)
+                        VALUES (%s, %s, %s, %s, %s, %s, %s)
+                    """
+                    self.cursor.executemany(query, array)
+                    self.db.commit()
+                    array = []
+                    cont = 1
+            
+            # Upload dangling records
+            print("- Total transactions to upload (last batch): " + str(len(array)))
+
             query = """
                 INSERT INTO transactions_pre (record, duration, status, called_at, user, campaign_id, list_id)
                 VALUES (%s, %s, %s, %s, %s, %s, %s)
@@ -60,8 +78,10 @@ class Transactions:
             self.cursor.executemany(query, array)
             self.db.commit()
 
+
         except mysql.connector.Error as e:
             print("- Error to Upload Transactions: " + e.msg)
+
 
     def Add(self):
 
@@ -74,8 +94,8 @@ class Transactions:
             records.AddTo("INSERT INTO records_pre (record) SELECT DISTINCT record FROM transactions_pre", 3)
 
             # Update statuses prefix
-            """self.cursor.execute("UPDATE transactions_pre SET status = CONCAT('BP_', status)")
-            self.db.commit()"""
+            self.cursor.execute("UPDATE transactions_pre SET status = CONCAT('BP_', status)")
+            self.db.commit()
 
             # Add transactions
             self.cursor.execute("""
