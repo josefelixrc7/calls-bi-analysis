@@ -29,11 +29,7 @@ class Records:
             # Delete existing records
             self.cursor.execute("""
                 DELETE rp FROM records_pre rp
-                LEFT JOIN records r ON r.record = rp.record
-                WHERE
-                    r.record IS NULL
-                    AND pre.record IS NOT NULL
-                    AND LENGTH(pre.record) = 10
+                JOIN records r ON r.record = rp.record
             """)
             self.db.commit()
 
@@ -42,6 +38,9 @@ class Records:
                 INSERT INTO records (record)
                 SELECT record
                 FROM records_pre
+                WHERE
+                    record IS NOT NULL
+                    AND LENGTH(record) = 10
             """)
             self.db.commit()
 
@@ -51,6 +50,9 @@ class Records:
                 SELECT r.id, """ + str(id_database) + """
                 FROM records_pre rp
                 JOIN records r ON r.record = rp.record
+                WHERE
+                    rp.record IS NOT NULL
+                    AND LENGTH(rp.record) = 10
             """)
             self.db.commit()
 
