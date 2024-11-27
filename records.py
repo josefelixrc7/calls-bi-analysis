@@ -60,9 +60,21 @@ class Records:
 
             # Add new records
             query = """
-                INSERT INTO records (record, id_database)
-                SELECT pre.record, """ + str(id_database) + """
+                INSERT INTO records (record)
+                SELECT DISTINCT pre.record
                 FROM records_pre pre
+                LEFT JOIN records r ON r.record = pre.record
+                WHERE r.record IS NULL
+            """
+            self.cursor.execute(query)
+            self.db.commit()
+
+            # Add database records
+            query = """
+                INSERT INTO databases_records (id_record, id_database)
+                SELECT r.id, """ + str(id_database) + """
+                FROM records_pre pre
+                JOIN records r ON r.record = pre.record
             """
             self.cursor.execute(query)
             self.db.commit()
@@ -108,13 +120,26 @@ class Records:
 
             # Add new records
             query = """
-                INSERT INTO records (record, id_database)
-                SELECT pre.record, 3
+                INSERT INTO records (record)
+                SELECT pre.record
                 FROM records_info_pre pre
                 LEFT JOIN records r ON r.record = pre.record
                 WHERE
                     r.record IS NULL
                     AND CHAR_LENGTH(pre.record) = 10
+            """
+            self.cursor.execute(query)
+            self.db.commit()
+
+            # Add new records to Database 3 (Referidos)
+            query = """
+                INSERT INTO databases_records (id_record, id_database)
+                SELECT pre.record, 3
+                FROM records_info_pre pre
+                JOIN records r ON r.record = pre.record
+                LEFT JOIN databases_records dr ON dr.id_record = r.record AND dr.id_database = 3
+                WHERE
+                    dr.id_record IS NULL
             """
             self.cursor.execute(query)
             self.db.commit()
