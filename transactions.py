@@ -68,16 +68,28 @@ class Transactions:
 
         try:
 
-            # Add new records (Referidos Database)
+            # Add new records
             self.cursor.execute("""
-                INSERT INTO records (record, id_database)
-                SELECT
-                    DISTINCT pre.record
-                    ,3
+                INSERT INTO records (record)
+                SELECT DISTINCT pre.record
                 FROM transactions_pre pre
                 LEFT JOIN records r ON r.record = pre.record
                 WHERE
                     r.record IS NULL
+                    AND pre.record IS NOT NULL
+                    AND LENGTH(pre.record) = 10
+            """)
+            self.db.commit()
+
+            # Add new records (Referidos Database)
+            self.cursor.execute("""
+                INSERT INTO databases_records (id_record, id_database)
+                SELECT r.id, 3
+                FROM transactions_pre pre
+                JOIN records r ON r.record = pre.record
+                LEFT JOIN databases_records dr ON dr.id_record = r.id AND dr.id_database = 3
+                WHERE
+                    dr.id_record IS NULL
                     AND pre.record IS NOT NULL
                     AND LENGTH(pre.record) = 10
             """)
