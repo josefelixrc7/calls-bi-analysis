@@ -69,8 +69,8 @@ class Data:
 
                     # Upload transactions to DB
                     query = """INSERT INTO records_blacklist_pre (record) VALUES (%s)"""
-                    self.cursor.executemany(query, array)
-                    self.db.commit()
+                    cursor.executemany(query, array)
+                    db.commit()
                     array = []
                     cont = 0
             
@@ -78,8 +78,8 @@ class Data:
             print("- Total blacklist records to process (last batch): " + str(len(array)))
 
             query = """INSERT INTO records_blacklist_pre (record) VALUES (%s)"""
-            self.cursor.executemany(query, array)
-            self.db.commit()
+            cursor.executemany(query, array)
+            db.commit()
 
         except mysql.connector.Error as e:
             print("- Error to upload blacklist: " + e.msg)
