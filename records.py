@@ -173,8 +173,8 @@ class Records:
                 INSERT INTO records_info (id_record)
                 SELECT r.id
                 FROM records r
-                LEFT JOIN records_info ri ON r.id_record = r.id
-                WHERE r.id_record IS NULL
+                LEFT JOIN records_info ri ON ri.id_record = r.id
+                WHERE ri.id_record IS NULL
             """
             self.cursor.execute(query)
             self.db.commit()
