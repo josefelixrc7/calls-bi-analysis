@@ -14,7 +14,11 @@ def CleanSegments():
 
     try:
 
-        # Create segment
+        # Truncate segments_records
+        cursor.execute("TRUNCATE TABLE segments_records")
+        db.commit()
+
+        # Delete segments
         cursor.execute("DELETE FROM segments")
         db.commit()
 
