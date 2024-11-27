@@ -69,22 +69,9 @@ class Transactions:
 
         try:
 
-            # Add new records
-            self.cursor.execute("""
-                INSERT INTO records (record)
-                SELECT DISTINCT pre.record
-                FROM transactions_pre pre
-                LEFT JOIN records r ON r.record = pre.record
-                WHERE
-                    r.record IS NULL
-                    AND pre.record IS NOT NULL
-                    AND LENGTH(pre.record) = 10
-            """)
-            self.db.commit()
-
             # Add new records to Referidos DB
             records = r.Records()
-            r.AddTo("INSERT INTO records_pre (record) SELECT DISTINCT record FROM transactions_pre", 3)
+            records.AddTo("INSERT INTO records_pre (record) SELECT DISTINCT record FROM transactions_pre", 3)
 
             # Update statuses prefix
             """self.cursor.execute("UPDATE transactions_pre SET status = CONCAT('BP_', status)")
