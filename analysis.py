@@ -29,10 +29,9 @@ class Analysis:
                 # Get analysis
                 self.cursor.execute("""
                     SELECT
-                        '52' AS phone_code
-                        ,r.record AS phone_number
+                        r.record AS phone_number
                         ,n.region AS region
-                        ,n.state AS esstado
+                        ,n.state AS estado
                         ,n.city AS plaza
                         ,IFNULL(JSON_EXTRACT(ri.info, '$.client'), "") AS cliente
                         ,IFNULL(JSON_EXTRACT(ri.info, '$.curp'), "") AS curp
@@ -48,7 +47,7 @@ class Analysis:
 
                 # Save to CSV
                 filename = "~/" + str(it[1]) + ".csv"
-                columns = ['phone_code','phone_number','region','estado','plaza','cliente','curp']
+                columns = ['phone_number','region','estado','plaza','cliente','curp']
                 df = pd.DataFrame(analysis, columns=columns, dtype='string')
                 df.to_csv(filename, index=False, sep="\t", header=columns)
 
@@ -71,8 +70,9 @@ class Analysis:
             """
                 INSERT INTO records_selected(id_record, id_nir)
                 SELECT r.id, n.id
-                FROM records r
-                JOIN segments_databases sd ON sd.id_database = r.id_database
+                FROM databases_records dr
+                JOIN records r ON r.id = dr.id_record
+                JOIN segments_databases sd ON sd.id_database = dr.id_database
                 LEFT JOIN segments_records sr ON sr.id_record = r.id
                 JOIN nirs n ON n.nir = SUBSTRING(r.record, 1, 3)
                 WHERE
@@ -99,8 +99,9 @@ class Analysis:
             """
                 INSERT INTO records_selected(id_record, id_nir)
                 SELECT r.id, n.id
-                FROM records r
-                JOIN segments_databases sd ON sd.id_database = r.id_database
+                FROM databases_records dr
+                JOIN records r ON r.id = dr.id_record
+                JOIN segments_databases sd ON sd.id_database = dr.id_database
                 LEFT JOIN segments_records sr ON sr.id_record = r.id
                 JOIN nirs n ON n.nir = SUBSTRING(r.record, 1, 3)
                 WHERE
@@ -127,8 +128,9 @@ class Analysis:
             """
                 INSERT INTO records_selected(id_record, id_nir)
                 SELECT r.id, n.id
-                FROM records r
-                JOIN segments_databases sd ON sd.id_database = r.id_database
+                FROM databases_records dr
+                JOIN records r ON r.id = dr.id_record
+                JOIN segments_databases sd ON sd.id_database = dr.id_database
                 LEFT JOIN segments_records sr ON sr.id_record = r.id
                 JOIN nirs n ON n.nir = SUBSTRING(r.record, 1, 3)
                 WHERE
@@ -155,8 +157,9 @@ class Analysis:
             """
                 INSERT INTO records_selected(id_record, id_nir)
                 SELECT r.id, n.id
-                FROM records r
-                JOIN segments_databases sd ON sd.id_database = r.id_database
+                FROM databases_records dr
+                JOIN records r ON r.id = dr.id_record
+                JOIN segments_databases sd ON sd.id_database = dr.id_database
                 LEFT JOIN segments_records sr ON sr.id_record = r.id
                 JOIN nirs n ON n.nir = SUBSTRING(r.record, 1, 3)
                 WHERE
@@ -183,8 +186,9 @@ class Analysis:
             """
                 INSERT INTO records_selected(id_record, id_nir)
                 SELECT r.id, n.id
-                FROM records r
-                JOIN segments_databases sd ON sd.id_database = r.id_database
+                FROM databases_records dr
+                JOIN records r ON r.id = dr.id_record
+                JOIN segments_databases sd ON sd.id_database = dr.id_database
                 LEFT JOIN segments_records sr ON sr.id_record = r.id
                 JOIN nirs n ON n.nir = SUBSTRING(r.record, 1, 3)
                 WHERE
@@ -211,8 +215,9 @@ class Analysis:
             """
                 INSERT INTO records_selected(id_record, id_nir)
                 SELECT r.id, n.id
-                FROM records r
-                JOIN segments_databases sd ON sd.id_database = r.id_database
+                FROM databases_records dr
+                JOIN records r ON r.id = dr.id_record
+                JOIN segments_databases sd ON sd.id_database = dr.id_database
                 LEFT JOIN segments_records sr ON sr.id_record = r.id
                 JOIN nirs n ON n.nir = SUBSTRING(r.record, 1, 3)
                 WHERE
@@ -239,8 +244,9 @@ class Analysis:
             """
                 INSERT INTO records_selected(id_record, id_nir)
                 SELECT r.id, n.id
-                FROM records r
-                JOIN segments_databases sd ON sd.id_database = r.id_database
+                FROM databases_records dr
+                JOIN records r ON r.id = dr.id_record
+                JOIN segments_databases sd ON sd.id_database = dr.id_database
                 LEFT JOIN segments_records sr ON sr.id_record = r.id
                 JOIN nirs n ON n.nir = SUBSTRING(r.record, 1, 3)
                 WHERE
