@@ -218,3 +218,37 @@ def CreateSegment(cantity, segment_name):
 
     except mysql.connector.Error as e:
         print("- Error to Create Segment: " + e.msg)
+
+def SegmentLeft():
+
+    print("- Segment Left")
+
+    # DB connection
+    conn = Connection('localhost', 'root', '0UHC72zNvywZ', 'catBI')
+    db = conn.Connect_()
+    cursor = db.cursor()
+
+    try:
+
+        # Truncate records_preselected
+        cursor.execute("TRUNCATE TABLE records_selected")
+        db.commit()
+
+        # Insert records
+        cursor.execute(
+        """
+            INSERT INTO records_selected(id_record, id_nir)
+            SELECT r.id, n.id
+            FROM databases_records dr
+            JOIN records r ON r.id = dr.id_record
+            JOIN segments_databases sd ON sd.id_database = dr.id_database
+            LEFT JOIN segments_records sr ON sr.id_record = r.id
+            JOIN nirs n ON n.nir = SUBSTRING(r.record, 1, 3)
+            WHERE
+                sr.id_record IS NULL
+            GROUP BY r.id
+        """)
+        db.commit()
+
+    except mysql.connector.Error as e:
+        print("- Error to Segment Left: " + e.msg)
