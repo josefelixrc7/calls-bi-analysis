@@ -26,6 +26,8 @@ def ExcludeBacklist():
             SELECT rb.id_record, """ + str(id_segment) + """
             FROM records_blacklist rb
             LEFT JOIN segments_records sr ON sr.id_record = rb.id_record
+            JOIN databases_records dr ON dr.id_record = rb.id_record
+            JOIN segments_databases sd ON sd.id_database = dr.id_database
             WHERE
                 sr.id_record IS NULL
         """)
@@ -57,6 +59,8 @@ def ExcludeNoDuration():
             SELECT t.id_record, """ + str(id_segment) + """
             FROM transactions t
             LEFT JOIN segments_records sr ON sr.id_record = t.id_record
+            JOIN databases_records dr ON dr.id_record = t.id_record
+            JOIN segments_databases sd ON sd.id_database = dr.id_database
             WHERE
                 sr.id_record IS NULL
                 AND t.called_at >= NOW() - INTERVAL 1 MONTH
@@ -92,6 +96,8 @@ def ExcludeNoreusable():
             FROM transactions t
             LEFT JOIN segments_records sr ON sr.id_record = t.id_record
             JOIN statuses s ON s.id = t.id_status
+            JOIN databases_records dr ON dr.id_record = t.id_record
+            JOIN segments_databases sd ON sd.id_database = dr.id_database
             WHERE
                 sr.id_record IS NULL
                 AND s.reusable = 0
@@ -126,6 +132,8 @@ def ExcludeOverused():
             SELECT t.id_record, """ + str(id_segment) + """
             FROM transactions t
             LEFT JOIN segments_records sr ON sr.id_record = t.id_record
+            JOIN databases_records dr ON dr.id_record = t.id_record
+            JOIN segments_databases sd ON sd.id_database = dr.id_database
             WHERE
                 sr.id_record IS NULL
                 AND t.called_at >= NOW() - INTERVAL 1 MONTH
@@ -162,6 +170,8 @@ def ExcludeSales():
             FROM transactions t
             LEFT JOIN segments_records sr ON sr.id_record = t.id_record
             JOIN statuses s ON s.id = t.id_status
+            JOIN databases_records dr ON dr.id_record = t.id_record
+            JOIN segments_databases sd ON sd.id_database = dr.id_database
             WHERE
                 sr.id_record IS NULL
                 AND s.status IN ('11', '13', '600', '602', '603', 'BP_11')
