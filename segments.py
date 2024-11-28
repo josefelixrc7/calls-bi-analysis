@@ -147,7 +147,7 @@ def CreateSegment(cantity, segment_name):
         cursor.execute("TRUNCATE TABLE segments_nirs_distribution")
         db.commit()
 
-        if cantity < 1:
+        if cantity <= 1:
             cursor.execute("""
                 INSERT INTO segments_nirs_distribution (id_nir, parts)
                 SELECT 
