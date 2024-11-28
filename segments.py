@@ -109,6 +109,28 @@ def UseDatabase(database):
     except mysql.connector.Error as e:
         print("- Error to UseDatabase: " + e.msg)
 
+def ShowDatabasesUsed():
+
+    print("- ShowDatabasesUsed")
+
+    # DB connection
+    conn = Connection('localhost', 'root', '0UHC72zNvywZ', 'catBI')
+    db = conn.Connect_()
+    cursor = db.cursor()
+
+    try:
+
+        # Add databases to use
+        cursor.execute("""
+            SELECT db.id AS 'ID', db.name AS 'DB'
+            FROM `databases` db
+            JOIN segments_databases sd ON sd.id_database = db.id
+        """)
+        results = cursor.fetchall()
+        print(results)
+
+    except mysql.connector.Error as e:
+        print("- Error to ShowDatabasesUsed: " + e.msg)
 
 def CreateSegment(cantity, segment_name):
 
