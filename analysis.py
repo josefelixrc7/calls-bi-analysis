@@ -29,7 +29,8 @@ class Analysis:
                 # Get analysis
                 self.cursor.execute("""
                     SELECT
-                        r.record AS phone_number
+                        '52' AS phone_code
+                        ,r.record AS phone_number
                         ,n.region AS region
                         ,n.state AS estado
                         ,n.city AS plaza
@@ -38,7 +39,7 @@ class Analysis:
                     FROM segments s
                     JOIN segments_records sr ON sr.id_segment = s.id 
                     JOIN records r ON r.id = sr.id_record 
-                    JOIN records_info ri ON ri.id_record = r.id 
+                    LEFT JOIN records_info ri ON ri.id_record = r.id 
                     JOIN nirs n ON n.nir = SUBSTRING(r.record, 1, 3)
                     WHERE s.id = """ + str(it[0]) + """
                     ORDER BY RAND()
@@ -47,7 +48,7 @@ class Analysis:
 
                 # Save to CSV
                 filename = "~/" + str(it[1]) + ".csv"
-                columns = ['phone_number','region','estado','plaza','cliente','curp']
+                columns = ['phone_code', 'phone_number','region','estado','plaza','cliente','curp']
                 df = pd.DataFrame(analysis, columns=columns, dtype='string')
                 df.to_csv(filename, index=False, sep="\t", header=columns)
 

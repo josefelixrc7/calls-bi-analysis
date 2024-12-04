@@ -13,7 +13,7 @@ class Transactions:
         self.db = self.conn.Connect_()
         self.cursor = self.db.cursor()
 
-    def Upload(self, csv_file):
+    def Upload(self, csv_file, truncate = True):
 
         print("- Upload Transactions: " + csv_file)
 
@@ -30,9 +30,10 @@ class Transactions:
                 ,"list_id": int
             })
 
-            # Truncate transactions_pre
-            self.cursor.execute("TRUNCATE TABLE transactions_pre")
-            self.db.commit()
+            if truncate:
+                # Truncate transactions_pre
+                self.cursor.execute("TRUNCATE TABLE transactions_pre")
+                self.db.commit()
 
             # Iterate over CSV transactions
             array = []
@@ -93,8 +94,8 @@ class Transactions:
             records.AddTo("INSERT INTO records_pre (record) SELECT DISTINCT record FROM transactions_pre", 3)
 
             # Update statuses prefix
-            self.cursor.execute("UPDATE transactions_pre SET status = CONCAT('BP_', status)")
-            self.db.commit()
+            #self.cursor.execute("UPDATE transactions_pre SET status = CONCAT('BP_', status)")
+            #self.db.commit()
 
             # Add transactions
             self.cursor.execute("""
