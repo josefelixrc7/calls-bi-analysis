@@ -83,7 +83,7 @@ class Transactions:
             print("- Error to Upload Transactions: " + e.msg)
 
 
-    def Add(self):
+    def Add(self, prefix = ''):
 
         print("- Add transactions")
 
@@ -94,8 +94,9 @@ class Transactions:
             records.AddTo("INSERT INTO records_pre (record) SELECT DISTINCT record FROM transactions_pre", 3)
 
             # Update statuses prefix
-            #self.cursor.execute("UPDATE transactions_pre SET status = CONCAT('BP_', status)")
-            #self.db.commit()
+            if prefix != '':
+                self.cursor.execute("UPDATE transactions_pre SET status = CONCAT('" + prefix + "_', status)")
+                self.db.commit()
 
             # Add transactions
             self.cursor.execute("""
