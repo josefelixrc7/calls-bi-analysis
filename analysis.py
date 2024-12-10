@@ -259,3 +259,33 @@ class Analysis:
 
         except mysql.connector.Error as e:
             print("- Error to make AnalysisSureste: " + e.msg)
+
+    def AnalysisMinutos1Plus(self):
+
+        print("- AnalysisMinutos1Plus")
+
+        try:
+            # Truncate records_preselected
+            self.cursor.execute("TRUNCATE TABLE records_selected")
+            self.db.commit()
+
+            # Insert records
+            self.cursor.execute(
+            """
+                INSERT INTO records_selected(id_record, id_nir)
+                SELECT r.id, n.id
+                FROM databases_records dr
+                JOIN records r ON r.id = dr.id_record
+                JOIN segments_databases sd ON sd.id_database = dr.id_database
+                JOIN transactions_last tl ON tl.id_record = r.id
+                LEFT JOIN segments_records sr ON sr.id_record = r.id
+                JOIN nirs n ON n.nir = SUBSTRING(r.record, 1, 3)
+                WHERE
+                    sr.id_record IS NULL
+                    AND tl.duration >= 60
+                GROUP BY r.id
+            """)
+            self.db.commit()
+
+        except mysql.connector.Error as e:
+            print("- Error to make AnalysisMinutos1Plus: " + e.msg)
