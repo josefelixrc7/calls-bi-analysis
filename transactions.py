@@ -115,5 +115,41 @@ class Transactions:
             """)
             self.db.commit()
 
+            # Add new records to last transactions
+            self.cursor.execute("""
+                INSERT INTO transactions_last (id_record)
+                SELECT DISTINCT r.id
+                FROM records r
+                LEFT JOIN transactions_last tl ON tl.id_record = r.id
+                WHERE tl.id_record IS NULL
+            """)
+            self.db.commit()
+
+            # Update durations
+            self.cursor.execute("""
+                UPDATE transactions_last tl
+                JOIN records r ON r.id = tl.id_record
+                JOIN transactions_pre tp ON tp.record = r.record
+                SET
+                    tl.duration = tp.duration
+                    ,tl.created_at = NOW()
+                WHERE 
+                    tp.duration > tl.duration
+            """)
+            self.db.commit()
+
+            # Update called_at
+            self.cursor.execute("""
+                UPDATE transactions_last tl
+                JOIN records r ON r.id = tl.id_record
+                JOIN transactions_pre tp ON tp.record = r.record
+                SET
+                    tl.called_at = tp.called_at
+                    ,tl.created_at = NOW()
+                WHERE 
+                    tp.called_at > tl.called_at
+            """)
+            self.db.commit()
+
         except mysql.connector.Error as e:
             print("- Error to Add Transactions: " + e.msg)
