@@ -12,6 +12,13 @@ class Analysis:
         self.db = self.conn.Connect_()
         self.cursor = self.db.cursor()
 
+    def ViewSelectedRecords(self):
+        # Truncate records_preselected
+        self.cursor.execute("SELECT COUNT(1) FROM records_selected")
+        total = self.cursor.fetchall()
+        print('- Selected records')
+        print(total)
+
     def Export(self):
 
         print("- Export Analysis")
@@ -82,6 +89,7 @@ class Analysis:
                 GROUP BY r.id
             """)
             self.db.commit()
+            self.ViewSelectedRecords()
 
         except mysql.connector.Error as e:
             print("- Error to make AnalysisCentroForaneo: " + e.msg)
@@ -111,6 +119,7 @@ class Analysis:
                 GROUP BY r.id
             """)
             self.db.commit()
+            self.ViewSelectedRecords()
 
         except mysql.connector.Error as e:
             print("- Error to make AnalysisCentroMetropolitano: " + e.msg)
@@ -140,6 +149,7 @@ class Analysis:
                 GROUP BY r.id
             """)
             self.db.commit()
+            self.ViewSelectedRecords()
 
         except mysql.connector.Error as e:
             print("- Error to make AnalysisNoreste: " + e.msg)
@@ -169,6 +179,7 @@ class Analysis:
                 GROUP BY r.id
             """)
             self.db.commit()
+            self.ViewSelectedRecords()
 
         except mysql.connector.Error as e:
             print("- Error to make AnalysisNoroeste: " + e.msg)
@@ -198,6 +209,7 @@ class Analysis:
                 GROUP BY r.id
             """)
             self.db.commit()
+            self.ViewSelectedRecords()
 
         except mysql.connector.Error as e:
             print("- Error to make AnalysisOccidente: " + e.msg)
@@ -227,6 +239,7 @@ class Analysis:
                 GROUP BY r.id
             """)
             self.db.commit()
+            self.ViewSelectedRecords()
 
         except mysql.connector.Error as e:
             print("- Error to make AnalysisSur: " + e.msg)
@@ -256,6 +269,7 @@ class Analysis:
                 GROUP BY r.id
             """)
             self.db.commit()
+            self.ViewSelectedRecords()
 
         except mysql.connector.Error as e:
             print("- Error to make AnalysisSureste: " + e.msg)
@@ -286,6 +300,7 @@ class Analysis:
                 GROUP BY r.id
             """)
             self.db.commit()
+            self.ViewSelectedRecords()
 
         except mysql.connector.Error as e:
             print("- Error to make AnalysisMinutos1Plus: " + e.msg)
