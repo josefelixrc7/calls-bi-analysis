@@ -109,6 +109,30 @@ def UseDatabase(database):
     except mysql.connector.Error as e:
         print("- Error to UseDatabase: " + e.msg)
 
+def UseDatabaseType(database):
+
+    print("- UseDatabaseType")
+
+    # DB connection
+    conn = Connection('localhost', 'root', '0UHC72zNvywZ', 'catBI')
+    db = conn.Connect_()
+    cursor = db.cursor()
+
+    try:
+
+        # Add databases to use
+        cursor.execute("""
+            INSERT INTO segments_databases (id_database)
+            SELECT db.id
+            FROM `databases` db
+            JOIN databases_types dt ON dt.id = db.id_database_type
+            WHERE dt.name = '""" + str(database) + """'
+        """)
+        db.commit()
+
+    except mysql.connector.Error as e:
+        print("- Error to UseDatabaseType: " + e.msg)
+
 def ShowDatabasesUsed():
 
     print("- ShowDatabasesUsed")
