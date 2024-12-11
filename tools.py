@@ -17,6 +17,15 @@ def FormatInt(string):
     else:
         return int(new_int)
 
+def FormatFloat(string):
+    valid_characteres = "-1234567890.,"
+    new_int = ''.join(c for c in string if c in valid_characteres)
+
+    if new_int == "nan" or new_int == "":
+        return float(0)
+    else:
+        return float(new_int)
+
 def FormatIntUnsigned(string):
     valid_characteres = "1234567890"
     new_int = ''.join(c for c in string if c in valid_characteres)

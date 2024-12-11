@@ -42,7 +42,7 @@ class Transactions:
 
                 # Values
                 record = t.FormatString(str(row['record']))
-                duration = t.FormatInt(str(row['duration']))
+                duration = t.FormatFloat(str(row['duration']))
                 status = t.FormatString(str(row['status']))
                 called_at = t.FormatString(str(row['called_at']))
                 user = t.FormatString(str(row['user']))
