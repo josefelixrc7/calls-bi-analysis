@@ -16,8 +16,7 @@ class Analysis:
         # Truncate records_preselected
         self.cursor.execute("SELECT COUNT(1) FROM records_selected")
         total = self.cursor.fetchall()
-        print('- Selected records')
-        print(total)
+        print('- Selected records: ' + str(total[0][0]))
 
     def Export(self):
 
