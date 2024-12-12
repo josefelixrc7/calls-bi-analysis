@@ -166,17 +166,15 @@ def ExcludeSales():
         cursor.execute(
         """
             INSERT INTO segments_records(id_record, id_segment)
-            SELECT t.id_record, """ + str(id_segment) + """
+            SELECT DISTINCT t.id_record, """ + str(id_segment) + """
             FROM transactions t
             LEFT JOIN segments_records sr ON sr.id_record = t.id_record
-            JOIN statuses s ON s.id = t.id_status
             JOIN databases_records dr ON dr.id_record = t.id_record
             JOIN segments_databases sd ON sd.id_database = dr.id_database
             WHERE
                 sr.id_record IS NULL
-                AND s.status IN ('11', '13', '600', '602', '603', 'BP_11')
+                AND t.id_status IN (79, 82, 83, 94, 96, 149) -- ('11', '13', '600', '602', '603', 'BP_11')
                 AND t.called_at >= NOW() - INTERVAL 1 MONTH
-            GROUP BY t.id_record
         """)
         db.commit()
 
