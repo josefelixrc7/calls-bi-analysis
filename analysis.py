@@ -77,9 +77,8 @@ class Analysis:
             """
                 INSERT INTO records_selected(id_record, id_nir)
                 SELECT r.id, n.id
-                FROM databases_records dr
-                JOIN records r ON r.id = dr.id_record
-                JOIN segments_databases sd ON sd.id_database = dr.id_database
+                FROM records_preselected rp
+                JOIN records r ON r.id = rp.id_record
                 LEFT JOIN segments_records sr ON sr.id_record = r.id
                 JOIN nirs n ON n.nir = SUBSTRING(r.record, 1, 3)
                 WHERE
@@ -107,9 +106,8 @@ class Analysis:
             """
                 INSERT INTO records_selected(id_record, id_nir)
                 SELECT r.id, n.id
-                FROM databases_records dr
-                JOIN records r ON r.id = dr.id_record
-                JOIN segments_databases sd ON sd.id_database = dr.id_database
+                FROM records_preselected rp
+                JOIN records r ON r.id = rp.id_record
                 LEFT JOIN segments_records sr ON sr.id_record = r.id
                 JOIN nirs n ON n.nir = SUBSTRING(r.record, 1, 3)
                 WHERE
@@ -137,9 +135,8 @@ class Analysis:
             """
                 INSERT INTO records_selected(id_record, id_nir)
                 SELECT r.id, n.id
-                FROM databases_records dr
-                JOIN records r ON r.id = dr.id_record
-                JOIN segments_databases sd ON sd.id_database = dr.id_database
+                FROM records_preselected rp
+                JOIN records r ON r.id = rp.id_record
                 LEFT JOIN segments_records sr ON sr.id_record = r.id
                 JOIN nirs n ON n.nir = SUBSTRING(r.record, 1, 3)
                 WHERE
@@ -167,9 +164,8 @@ class Analysis:
             """
                 INSERT INTO records_selected(id_record, id_nir)
                 SELECT r.id, n.id
-                FROM databases_records dr
-                JOIN records r ON r.id = dr.id_record
-                JOIN segments_databases sd ON sd.id_database = dr.id_database
+                FROM records_preselected rp
+                JOIN records r ON r.id = rp.id_record
                 LEFT JOIN segments_records sr ON sr.id_record = r.id
                 JOIN nirs n ON n.nir = SUBSTRING(r.record, 1, 3)
                 WHERE
@@ -197,9 +193,8 @@ class Analysis:
             """
                 INSERT INTO records_selected(id_record, id_nir)
                 SELECT r.id, n.id
-                FROM databases_records dr
-                JOIN records r ON r.id = dr.id_record
-                JOIN segments_databases sd ON sd.id_database = dr.id_database
+                FROM records_preselected rp
+                JOIN records r ON r.id = rp.id_record
                 LEFT JOIN segments_records sr ON sr.id_record = r.id
                 JOIN nirs n ON n.nir = SUBSTRING(r.record, 1, 3)
                 WHERE
@@ -227,9 +222,8 @@ class Analysis:
             """
                 INSERT INTO records_selected(id_record, id_nir)
                 SELECT r.id, n.id
-                FROM databases_records dr
-                JOIN records r ON r.id = dr.id_record
-                JOIN segments_databases sd ON sd.id_database = dr.id_database
+                FROM records_preselected rp
+                JOIN records r ON r.id = rp.id_record
                 LEFT JOIN segments_records sr ON sr.id_record = r.id
                 JOIN nirs n ON n.nir = SUBSTRING(r.record, 1, 3)
                 WHERE
@@ -257,9 +251,8 @@ class Analysis:
             """
                 INSERT INTO records_selected(id_record, id_nir)
                 SELECT r.id, n.id
-                FROM databases_records dr
-                JOIN records r ON r.id = dr.id_record
-                JOIN segments_databases sd ON sd.id_database = dr.id_database
+                FROM records_preselected rp
+                JOIN records r ON r.id = rp.id_record
                 LEFT JOIN segments_records sr ON sr.id_record = r.id
                 JOIN nirs n ON n.nir = SUBSTRING(r.record, 1, 3)
                 WHERE
@@ -287,9 +280,8 @@ class Analysis:
             """
                 INSERT INTO records_selected(id_record, id_nir)
                 SELECT r.id, n.id
-                FROM databases_records dr
-                JOIN records r ON r.id = dr.id_record
-                JOIN segments_databases sd ON sd.id_database = dr.id_database
+                FROM records_preselected rp
+                JOIN records r ON r.id = rp.id_record
                 JOIN transactions_last tl ON tl.id_record = r.id
                 LEFT JOIN segments_records sr ON sr.id_record = r.id
                 JOIN nirs n ON n.nir = SUBSTRING(r.record, 1, 3)
