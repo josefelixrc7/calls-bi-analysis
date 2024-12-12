@@ -80,7 +80,7 @@ def CleanDatabasesUsed():
     try:
 
         # Truncate
-        cursor.execute("TRUNCATE TABLE segments_databases")
+        cursor.execute("TRUNCATE TABLE records_preselected")
         db.commit()
 
     except mysql.connector.Error as e:
@@ -99,10 +99,11 @@ def UseDatabase(database):
 
         # Add databases to use
         cursor.execute("""
-            INSERT INTO segments_databases (id_database)
-            SELECT id
-            FROM `databases`
-            WHERE id = """ + str(database) + """
+            INSERT INTO records_preselected (id_record)
+            SELECT DISTINCT dr.id_record
+            FROM databases_records dr
+            JOIN `databases` db ON db.id = dr.id_database
+            WHERE db.id = """ + str(database) + """
         """)
         db.commit()
 
@@ -122,9 +123,10 @@ def UseDatabaseType(database):
 
         # Add databases to use
         cursor.execute("""
-            INSERT INTO segments_databases (id_database)
-            SELECT db.id
-            FROM `databases` db
+            INSERT INTO records_preselected (id_record)
+            SELECT DISTINCT dr.id_record
+            FROM databases_records dr
+            JOIN `databases` db ON db.id = dr.id_database
             JOIN databases_types dt ON dt.id = db.id_database_type
             WHERE dt.name = '""" + str(database) + """'
         """)
@@ -132,29 +134,6 @@ def UseDatabaseType(database):
 
     except mysql.connector.Error as e:
         print("- Error to UseDatabaseType: " + e.msg)
-
-def ShowDatabasesUsed():
-
-    print("- ShowDatabasesUsed")
-
-    # DB connection
-    conn = Connection('localhost', 'root', '0UHC72zNvywZ', 'catBI')
-    db = conn.Connect_()
-    cursor = db.cursor()
-
-    try:
-
-        # Add databases to use
-        cursor.execute("""
-            SELECT db.id AS 'ID', db.name AS 'DB'
-            FROM `databases` db
-            JOIN segments_databases sd ON sd.id_database = db.id
-        """)
-        results = cursor.fetchall()
-        print(results)
-
-    except mysql.connector.Error as e:
-        print("- Error to ShowDatabasesUsed: " + e.msg)
 
 def CreateSegment(cantity, segment_name):
 
