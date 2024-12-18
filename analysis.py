@@ -295,3 +295,34 @@ class Analysis:
 
         except mysql.connector.Error as e:
             print("- Error to make AnalysisMinutos1Plus: " + e.msg)
+
+    def AnalysisEFE20(self):
+
+        print("- AnalysisEFE20")
+
+        try:
+            # Truncate records_preselected
+            self.cursor.execute("TRUNCATE TABLE records_selected")
+            self.db.commit()
+
+            # Insert records
+            self.cursor.execute(
+            """
+                INSERT INTO records_selected(id_record, id_nir)
+                SELECT r.id, n.id
+                FROM records_preselected rp
+                JOIN records r ON r.id = rp.id_record
+                LEFT JOIN segments_records sr ON sr.id_record = r.id
+                JOIN nirs n ON n.nir = SUBSTRING(r.record, 1, 3)
+                WHERE
+                    sr.id_record IS NULL
+                    AND n.nir IN ('999','663','712','642','744','618','818','554'
+                        ,'664','322','662','644','246','331','272','646','686','562','443','312'
+                    )
+                GROUP BY r.id
+            """)
+            self.db.commit()
+            self.ViewSelectedRecords()
+
+        except mysql.connector.Error as e:
+            print("- Error to make AnalysisEFE20: " + e.msg)
