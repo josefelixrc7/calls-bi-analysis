@@ -12,7 +12,7 @@ class Records:
         self.db = self.conn.Connect_()
         self.cursor = self.db.cursor()
 
-    def AddTo(self, query_to, id_database):
+    def AddTo(self, query_to, id_database, delete = True):
 
         print("- Add To: " + str(id_database))
 
@@ -26,21 +26,24 @@ class Records:
             self.cursor.execute(query_to)
             self.db.commit()
 
-            # Delete existing records
-            self.cursor.execute("""
-                DELETE rp FROM records_pre rp
-                JOIN records r ON r.record = rp.record
-            """)
-            self.db.commit()
+            if delete == True:
+                # Delete existing records
+                self.cursor.execute("""
+                    DELETE rp FROM records_pre rp
+                    JOIN records r ON r.record = rp.record
+                """)
+                self.db.commit()
 
             # Insert new records
             self.cursor.execute("""
                 INSERT INTO records (record)
-                SELECT record
-                FROM records_pre
+                SELECT pre.record
+                FROM records_pre pre
+                LEFT JOIN records r ON r.record = pre.record
                 WHERE
-                    record IS NOT NULL
-                    AND LENGTH(record) = 10
+                    r.record IS NULL        
+                    AND pre.record IS NOT NULL
+                    AND LENGTH(pre.record) = 10
             """)
             self.db.commit()
 
