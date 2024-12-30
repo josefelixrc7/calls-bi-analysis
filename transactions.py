@@ -115,6 +115,18 @@ class Transactions:
             """)
             self.db.commit()
 
+            # More functions
+            self.UpdateLast()
+            self.AddRecordsToSalesDB()
+
+        except mysql.connector.Error as e:
+            print("- Error to Add Transactions: " + e.msg)
+
+    def UpdateLast(self):
+        print("- UpdateLast")
+
+        try:
+
             # Add new records to last transactions
             self.cursor.execute("""
                 INSERT INTO transactions_last (id_record)
@@ -152,4 +164,24 @@ class Transactions:
             self.db.commit()
 
         except mysql.connector.Error as e:
-            print("- Error to Add Transactions: " + e.msg)
+            print("- Error to UpdateLast: " + e.msg)
+
+    def AddRecordsToSalesDB(self):
+        print("- AddRecordsToSalesDB")
+
+        try:
+
+            # Add new records to Sales DB
+            records = r.Records()
+            records.AddTo(
+                """
+                    INSERT INTO records_pre (record) 
+                    SELECT DISTINCT pre.record
+                    FROM transactions_pre pre
+                    JOIN statuses st ON st.status = pre.status
+                    WHERE st.sale = 1
+                """
+                ,17, False)
+
+        except mysql.connector.Error as e:
+            print("- Error to AddRecordsToSalesDB: " + e.msg)
