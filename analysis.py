@@ -418,3 +418,61 @@ class Analysis:
 
         except mysql.connector.Error as e:
             print("- Error to make AnalysisReferidos: " + e.msg)
+
+    def AnalysisBajaCalifornia(self):
+
+        print("- AnalysisBajaCalifornia")
+
+        try:
+            # Truncate records_preselected
+            self.cursor.execute("TRUNCATE TABLE records_selected")
+            self.db.commit()
+
+            # Insert records
+            self.cursor.execute(
+            """
+                INSERT INTO records_selected(id_record, id_nir)
+                SELECT r.id, n.id
+                FROM records_preselected rp
+                JOIN records r ON r.id = rp.id_record
+                LEFT JOIN segments_records sr ON sr.id_record = r.id
+                JOIN nirs n ON n.nir = SUBSTRING(r.record, 1, 3)
+                WHERE
+                    sr.id_record IS NULL
+                    AND n.state = 'BAJA CALIFORNIA'
+                GROUP BY r.id
+            """)
+            self.db.commit()
+            self.ViewSelectedRecords()
+
+        except mysql.connector.Error as e:
+            print("- Error to make AnalysisBajaCalifornia: " + e.msg)
+
+    def AnalysisJalisco(self):
+
+        print("- AnalysisJalisco")
+
+        try:
+            # Truncate records_preselected
+            self.cursor.execute("TRUNCATE TABLE records_selected")
+            self.db.commit()
+
+            # Insert records
+            self.cursor.execute(
+            """
+                INSERT INTO records_selected(id_record, id_nir)
+                SELECT r.id, n.id
+                FROM records_preselected rp
+                JOIN records r ON r.id = rp.id_record
+                LEFT JOIN segments_records sr ON sr.id_record = r.id
+                JOIN nirs n ON n.nir = SUBSTRING(r.record, 1, 3)
+                WHERE
+                    sr.id_record IS NULL
+                    AND n.state = 'JALISCO'
+                GROUP BY r.id
+            """)
+            self.db.commit()
+            self.ViewSelectedRecords()
+
+        except mysql.connector.Error as e:
+            print("- Error to make AnalysisJalisco: " + e.msg)
