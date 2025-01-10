@@ -63,7 +63,7 @@ def ExcludeNoDuration():
                 sr.id_record IS NULL
                 AND t.called_at >= NOW() - INTERVAL 1 MONTH
             GROUP BY t.id_record
-            HAVING MAX(t.duration) = 0 AND COUNT(1) >= 7
+            HAVING MAX(t.duration) = 0 AND COUNT(1) >= 3
         """)
         db.commit()
 
