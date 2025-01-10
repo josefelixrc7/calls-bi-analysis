@@ -476,3 +476,41 @@ class Analysis:
 
         except mysql.connector.Error as e:
             print("- Error to make AnalysisJalisco: " + e.msg)
+
+    def AnalysisRETARGET(self):
+
+        print("- AnalysisRETARGET")
+
+        try:
+            # Truncate records_preselected
+            self.cursor.execute("TRUNCATE TABLE records_selected")
+            self.db.commit()
+
+            # Insert records
+            self.cursor.execute(
+            """
+                INSERT INTO records_selected(id_record, id_nir)
+                SELECT r.id, n.id
+                FROM records_preselected rp
+                JOIN records r ON r.id = rp.id_record
+                LEFT JOIN segments_records sr ON sr.id_record = r.id
+                JOIN nirs n ON n.nir = SUBSTRING(r.record, 1, 3)
+                JOIN (
+                    SELECT s.id_record AS id_record
+                    FROM (
+                        SELECT s.id_record AS id_record, COUNT(1) AS total
+                        FROM sales s
+                        WHERE s.sales_date <= NOW() - INTERVAL 2 MONTH
+                        GROUP BY s.id_record
+                    ) s
+                    WHERE s.total >= 2
+                ) sa ON sa.id_record = r.id
+                WHERE
+                    sr.id_record IS NULL
+                GROUP BY r.id
+            """)
+            self.db.commit()
+            self.ViewSelectedRecords()
+
+        except mysql.connector.Error as e:
+            print("- Error to make AnalysisRETARGET: " + e.msg)
