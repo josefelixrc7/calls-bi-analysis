@@ -2,9 +2,9 @@
 import pandas as pd
 import mysql.connector
 
-from connection import Connection
-import tools as t
-import records as r
+from functions.connection import Connection
+import functions.tools as t
+import functions.records as r
 
 class Transactions:
 

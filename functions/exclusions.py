@@ -1,7 +1,7 @@
 
 import mysql.connector
 
-from connection import Connection
+from functions.connection import Connection
 
 def ExcludeBacklist():
 
