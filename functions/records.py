@@ -168,7 +168,7 @@ class Records:
             self.cursor.executemany(query, array)
             self.db.commit()
 
-            # Add new records to Referidos DB
+            # Add new records to No registered DB
             self.AddTo("INSERT INTO records_pre (record) SELECT DISTINCT record FROM records_info_pre", 3)
 
             # Add new records_info

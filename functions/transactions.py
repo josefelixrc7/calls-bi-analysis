@@ -89,7 +89,7 @@ class Transactions:
 
         try:
 
-            # Add new records to Referidos DB
+            # Add new records to No Registered DB
             records = r.Records()
             records.AddTo("INSERT INTO records_pre (record) SELECT DISTINCT record FROM transactions_pre", 3)
 
@@ -118,6 +118,7 @@ class Transactions:
             # More functions
             self.UpdateLast()
             self.AddRecordsToSales()
+            self.AddRecordsToSalesDB()
 
         except mysql.connector.Error as e:
             print("- Error to Add Transactions: " + e.msg)
@@ -184,3 +185,23 @@ class Transactions:
 
         except mysql.connector.Error as e:
             print("- Error to AddRecordsToSales: " + e.msg)
+
+    def AddRecordsToSalesDB(self):
+        print("- AddRecordsToSalesDB")
+
+        try:
+
+            # Add new records to Sales DB
+            records = r.Records()
+            records.AddTo(
+                """
+                    INSERT INTO records_pre (record) 
+                    SELECT DISTINCT pre.record
+                    FROM transactions_pre pre
+                    JOIN statuses st ON st.status = pre.status
+                    WHERE st.sale = 1
+                """
+                ,17, False)
+
+        except mysql.connector.Error as e:
+            print("- Error to AddRecordsToSalesDB: " + e.msg)
