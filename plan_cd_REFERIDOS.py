@@ -2,9 +2,12 @@
 import functions.segments as s
 
 s.CleanSegments()
+
+# Clean DBs used
 s.CleanDatabasesUsed()
-s.UseDatabase(16)
-s.UseDatabase(17)
+
+# Use DB
+s.UseDatabaseType('Referidos')
 
 # Exclusions
 import functions.exclusions as e
@@ -21,7 +24,7 @@ import functions.segments as s
 a = functions.analysis.Analysis()
 
 s.SegmentLeft()
-s.CreateSegment(7000, '85000')
+s.CreateSegment(7000, '61049')
 
 # Export Analysis
 import functions.analysis as a
