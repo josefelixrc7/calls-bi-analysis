@@ -28,11 +28,8 @@ import functions.segments as s
 
 a = functions.analysis.Analysis()
 
-a.AnalysisBajaCalifornia()
-s.CreateSegment(15000, '61047')
-
-a.AnalysisJalisco()
-s.CreateSegment(15000, '61048')
+a.AnalysisMinutos1Plus()
+s.CreateSegment(7000, '61050')
 
 # Export Analysis
 import functions.analysis as a
