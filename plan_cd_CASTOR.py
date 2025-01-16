@@ -33,10 +33,10 @@ s.CreateSegment(15000, '61032')
 #s.CreateSegment(15000, '61033')
 
 a.AnalysisNoreste()
-s.CreateSegment(15000, '61034')
+s.CreateSegment(8000, '61034')
 
 a.AnalysisNoroeste()
-s.CreateSegment(15000, '61035')
+s.CreateSegment(8000, '61035')
 #a.AnalysisOccidente()
 #s.CreateSegment(5000, '61036')
 
