@@ -26,7 +26,7 @@ a = functions.analysis.Analysis()
 s.SegmentLeft()
 
 print('Records cantity: ', end="")
-cantity = input()
+cantity = int(input())
 print('Segment name: ', end="")
 segment_name = input()
 s.CreateSegment(cantity, segment_name)
