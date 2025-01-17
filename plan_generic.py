@@ -1,3 +1,11 @@
+
+print('Use DB: ', end="")
+use_db = input()
+print('Records cantity: ', end="")
+cantity = int(input())
+print('Segment name: ', end="")
+segment_name = input()
+
 # Clean segments
 import functions.segments as s
 
@@ -7,8 +15,7 @@ s.CleanSegments()
 s.CleanDatabasesUsed()
 
 # Use DB
-print('Use DB: ', end="")
-s.UseDatabase(input())
+s.UseDatabase(use_db)
 
 # Exclusions
 import functions.exclusions as e
@@ -16,6 +23,8 @@ import functions.exclusions as e
 e.ExcludeBacklist()
 e.ExcludeSales()
 e.ExcludeOverused()
+e.ExcludeNoreusable()
+e.ExcludeNoDuration
 
 # Analysis
 import functions.analysis
@@ -25,10 +34,6 @@ a = functions.analysis.Analysis()
 
 s.SegmentLeft()
 
-print('Records cantity: ', end="")
-cantity = int(input())
-print('Segment name: ', end="")
-segment_name = input()
 s.CreateSegment(cantity, segment_name)
 
 # Export Analysis
